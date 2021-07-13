@@ -40,6 +40,7 @@ main(int argc, char *argv[])
     fhp->handle_bytes = 0;
     if (name_to_handle_at(dirfd, pathname, fhp,
                 &mount_id, flags) != -1 || errno != EOVERFLOW) {
+        printf("%s\n", strerror(errno)); 
         fprintf(stderr, "Unexpected result from name_to_handle_at()\n");
         exit(EXIT_FAILURE);
     }
