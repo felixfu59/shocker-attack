@@ -1,8 +1,3 @@
----
-title: 容器安全之shocker攻击
-date: 2021-07-13 10:44:48
-tags: 
----
 ### 漏洞简介
 **危害**：容器内可以访问宿主机大部分文件
 
@@ -62,7 +57,7 @@ if ((fd1 = open("/etc/hosts", O_RDONLY)) < 0)
 
 编译后，docker cp到容器内运行，结果为容器中访问到了**宿主机的/etc/shadow文件**。
 
-![shocker攻击并获取宿主机文件](image-20210713111916790.png)
+![shocker攻击并获取宿主机文件](img/image-20210713111916790.png)
 
 ### 漏洞原理
 
@@ -242,7 +237,7 @@ int open_by_handle_at(int mount_fd, struct file_handle *handle,int flags);
 
 该参数可以是一个已mount文件系统上的任意一个文件的文件描述符，这就是为什么一开始我们poc中，需要将/.dockerinit 文件名，改为 /etc/hosts，因为我们需要读取宿主机根文件系统中的文件，/etc/resolv.conf，/etc/hostname，/etc/hosts等文件在新版本的docker中，仍然是从宿主机直接挂载的，属于宿主机的根文件系统。
 
-![宿主机根文件系统](host-mount-files.png)
+![宿主机根文件系统](img/host-mount-files.png)
 
 `*handle`就非常明确了，我们刚才所分析`name_to_handle_at`所返回的参数。`flags`参数和open类似。
 
@@ -348,7 +343,7 @@ $ ./t_name_to_handle_at /
 所以可以先获取根目录的文件描述符，然后读取根目录下的二级目录的inodeid和二级目录名称，匹配需要读取文件的二级目录并拿到inodeid，剩下4个未知的字节直接爆破，进而拿到二级目录的文件描述符。然后继续以同样的方式进行读取。
 
 
-<img src="image-20210713190546925.png" style="zoom:50%;" />
+<img src="img/image-20210713190546925.png" style="zoom:50%;" />
 
 
 ### 参考
